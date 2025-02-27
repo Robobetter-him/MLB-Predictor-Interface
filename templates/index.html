@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLB Game Predictor - Advanced Statistical Analysis</title>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <meta name="description" content="Advanced MLB game predictions using statistical analysis and machine learning">
+    <meta name="theme-color" content="#1e40af">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">⚾</div>
+                <div>
+                    <h1>MLB Game Predictor</h1>
+                    <p>Advanced Statistical Analysis</p>
+                </div>
+            </div>
+            <nav>
+                <button id="predictor-tab" class="tab-button active">Game Predictor</button>
+                <button id="picks-tab" class="tab-button">Best Picks</button>
+            </nav>
+        </header>
+
+        <main>
+            <section id="predictor-section" class="section">
+                <div class="card">
+                    <div class="team-selection">
+                        <div class="team-select">
+                            <label for="home-team">Home Team</label>
+                            <select id="home-team" class="select-custom">
+                                <option value="">Select Home Team</option>
+                                {% for team in teams %}
+                                <option value="{{ team }}">{{ team }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="team-select">
+                            <label for="away-team">Away Team</label>
+                            <select id="away-team" class="select-custom">
+                                <option value="">Select Away Team</option>
+                                {% for team in teams %}
+                                <option value="{{ team }}">{{ team }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button id="predict-button" class="predict-button" disabled>
+                        <span class="icon">📊</span>
+                        Generate Prediction
+                        <span class="icon">→</span>
+                    </button>
+                    <p id="team-error" class="error-message hidden">Please select different teams</p>
+                </div>
+
+                <div id="prediction-results" class="hidden">
+                    <div class="results-grid">
+                        <div class="card result-card">
+                            <div class="card-header">
+                                <span class="icon">🏆</span>
+                                <h3>Win Probability</h3>
+                            </div>
+                            <div id="win-probability" class="prediction-value">0.0%</div>
+                            <p id="matchup" class="matchup"></p>
+                            <p id="prediction-description" class="description"></p>
+                        </div>
+                        <div class="card result-card">
+                            <div class="card-header">
+                                <span class="icon">📈</span>
+                                <h3>Model Confidence</h3>
+                            </div>
+                            <div id="confidence" class="confidence-value">0.0%</div>
+                            <p class="matchup">Statistical Confidence Level</p>
+                            <p id="confidence-description" class="description"></p>
+                        </div>
+                    </div>
+
+                    <div class="results-grid">
+                        <div id="home-stats" class="card stats-card">
+                            <h3 class="stats-title">
+                                <span class="icon">⚾</span>
+                                <span id="home-team-name">Home Team</span> Stats
+                            </h3>
+                            <div class="stats-grid">
+                                <!-- Stats will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div id="away-stats" class="card stats-card">
+                            <h3 class="stats-title">
+                                <span class="icon">⚾</span>
+                                <span id="away-team-name">Away Team</span> Stats
+                            </h3>
+                            <div class="stats-grid">
+                                <!-- Stats will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="picks-section" class="section hidden">
+                <div class="date-selector">
+                    <label for="game-date">
+                        <span class="icon">📅</span>
+                        Select Date:
+                    </label>
+                    <input type="date" id="game-date" value="{{ today }}">
+                </div>
+                <div id="games-container" class="games-container">
+                    <div class="loading">Loading games...</div>
+                </div>
+            </section>
+        </main>
+
+        <section class="about-section">
+            <div class="card">
+                <div class="about-header">
+                    <span class="icon">🧠</span>
+                    <h2>Our Prediction Methodology</h2>
+                </div>
+                <p>
+                    Our MLB game prediction system uses advanced statistical analysis and machine learning techniques
+                    to provide accurate predictions for baseball games. We combine historical data, team performance metrics,
+                    and situational variables to generate win probabilities.
+                </p>
+            </div>
+
+            <div class="stats-factors-grid">
+                <div class="card factor-card">
+                    <div class="factor-header">
+                        <span class="icon">🧮</span>
+                        <h3>Statistical Factors</h3>
+                    </div>
+                    <ul class="factor-list">
+                        <li><span class="icon">📊</span> Team Win Percentages (Home/Away)</li>
+                        <li><span class="icon">🎯</span> On-base Percentage (OBP)</li>
+                        <li><span class="icon">📈</span> OPS (On-base Plus Slugging)</li>
+                    </ul>
+                </div>
+
+                <div class="card factor-card">
+                    <div class="factor-header">
+                        <span class="icon">∑</span>
+                        <h3>Regression Model</h3>
+                    </div>
+                    <ul class="factor-list">
+                        <li><span class="icon">🗄️</span> Historical Game Data Analysis</li>
+                        <li><span class="icon">✨</span> Performance Metrics Weighting</li>
+                        <li><span class="icon">🎯</span> Situational Variables</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Prediction Formula</h3>
+                <div class="formula-container">
+                    <p>Our prediction model uses a weighted combination of factors:</p>
+                    <div class="formula-box">
+                        <p><strong>1. Home Field Advantage (15%):</strong> Historical performance at home vs. league average</p>
+                        <p><strong>2. Head-to-Head Stats (55%):</strong></p>
+                        <ul>
+                            <li>OPS Differential (20%)</li>
+                            <li>OBP Comparison (20%)</li>
+                            <li>Run Differential (15%)</li>
+                        </ul>
+                        <p><strong>3. Recent Form (30%):</strong></p>
+                        <ul>
+                            <li>Home/Away Win Rate (20%)</li>
+                            <li>Overall Win Percentage (10%)</li>
+                        </ul>
+                    </div>
+                    <p class="formula-note">
+                        The model adjusts these weights dynamically based on the significance of each factor in recent games,
+                        ensuring the predictions remain accurate throughout the season.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2025 MLB Game Predictor | Advanced Statistical Analysis</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
